@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Scan MQ container image
-        uses: wphillipmoore/standard-actions/actions/security/trivy@v1.1
+        uses: wphillipmoore/standard-actions/actions/security/trivy@v1.4
         with:
           scan-type: image
           scan-ref: icr.io/ibm-messaging/mq:latest
