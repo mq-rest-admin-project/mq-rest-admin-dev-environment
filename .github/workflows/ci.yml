@@ -39,8 +39,8 @@ jobs:
     uses: wphillipmoore/standard-actions/.github/workflows/ci-security.yml@v1.5
     with:
       language: shell
-      run-standards: ${{ inputs.run-security || true }}
-      run-security: ${{ inputs.run-security || true }}
+      run-standards: ${{ inputs.run-release != 'false' }}
+      run-security: ${{ inputs.run-security != 'false' }}
       run-codeql: false
     permissions:
       contents: read
