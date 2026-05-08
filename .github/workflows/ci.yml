@@ -1,29 +1,39 @@
-name: CI - Test and Validate
+name: CI
 
 on:
   pull_request:
+  workflow_call:
+    inputs:
+      run-security:
+        type: string
+        default: "true"
+      run-release:
+        type: string
+        default: "true"
 
 permissions:
   contents: read
-  security-events: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  security-and-standards:
-    uses: wphillipmoore/standard-actions/.github/workflows/ci-security.yml@v1.4
-    permissions:
-      contents: read
-      security-events: write
-    with:
-      language: shell
-      run-codeql: 'false'
+  common:
+    name: "quality / common"
+    runs-on: ubuntu-latest
+    container: ghcr.io/wphillipmoore/dev-base:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Run common quality checks
+        run: st-validate --check common
 
   shellcheck:
-    name: "ci: shellcheck"
+    name: "quality / shellcheck"
     runs-on: ubuntu-latest
+    container: ghcr.io/wphillipmoore/dev-base:latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -38,14 +48,28 @@ jobs:
           fi
 
   actionlint:
-    name: "ci: actionlint"
+    name: "quality / actionlint"
     runs-on: ubuntu-latest
+    container: ghcr.io/wphillipmoore/dev-base:latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Install actionlint
-        run: bash <(curl -s https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-
       - name: Run actionlint
-        run: ./actionlint
+        run: actionlint
+
+  security:
+    if: ${{ inputs.run-security != 'false' }}
+    uses: wphillipmoore/standard-actions/.github/workflows/ci-security.yml@v1.5
+    permissions:
+      contents: read
+      security-events: write
+    with:
+      language: shell
+      run-codeql: "false"
+
+  release:
+    if: ${{ inputs.run-release != 'false' }}
+    uses: wphillipmoore/standard-actions/.github/workflows/ci-release.yml@v1.5
+    permissions:
+      contents: read
