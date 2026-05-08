@@ -13,5 +13,9 @@ codex = "Co-Authored-By: wphillipmoore-codex <255923655+wphillipmoore-codex@user
 versions = ["latest"]
 integration-tests = false
 
+[publish]
+release = true
+docs = true
+
 [dependencies]
 standard-tooling = "v1.4"
