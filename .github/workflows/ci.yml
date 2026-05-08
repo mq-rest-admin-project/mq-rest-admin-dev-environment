@@ -73,3 +73,5 @@ jobs:
     uses: wphillipmoore/standard-actions/.github/workflows/ci-release.yml@v1.5
     permissions:
       contents: read
+    with:
+      language: shell
