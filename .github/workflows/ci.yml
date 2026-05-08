@@ -5,11 +5,11 @@ on:
   workflow_call:
     inputs:
       run-security:
-        type: string
-        default: "true"
+        type: boolean
+        default: true
       run-release:
-        type: string
-        default: "true"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -19,57 +19,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  common:
-    name: "quality / common"
-    runs-on: ubuntu-latest
-    container: ghcr.io/wphillipmoore/dev-base:latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
 
-      - name: Run common quality checks
-        run: st-validate --check common
+  # ---------------------------------------------------------------------------
+  # Quality
+  # ---------------------------------------------------------------------------
 
-  shellcheck:
-    name: "quality / shellcheck"
-    runs-on: ubuntu-latest
-    container: ghcr.io/wphillipmoore/dev-base:latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+  quality:
+    uses: wphillipmoore/standard-actions/.github/workflows/ci-quality.yml@v1.5
+    with:
+      language: shell
+      versions: '["latest"]'
+      container-suffix: base
 
-      - name: Run shellcheck
-        run: |
-          files=$(find scripts -type f \( -name '*.sh' -o -path '*/git-hooks/*' \) | sort)
-          if [ -n "$files" ]; then
-            echo "$files" | xargs shellcheck
-          else
-            echo "No shell scripts found."
-          fi
-
-  actionlint:
-    name: "quality / actionlint"
-    runs-on: ubuntu-latest
-    container: ghcr.io/wphillipmoore/dev-base:latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Run actionlint
-        run: actionlint
+  # ---------------------------------------------------------------------------
+  # Security and standards
+  # ---------------------------------------------------------------------------
 
   security:
-    if: ${{ inputs.run-security != 'false' }}
     uses: wphillipmoore/standard-actions/.github/workflows/ci-security.yml@v1.5
+    with:
+      language: shell
+      run-standards: ${{ inputs.run-security || true }}
+      run-security: ${{ inputs.run-security || true }}
+      run-codeql: false
     permissions:
       contents: read
       security-events: write
-    with:
-      language: shell
-      run-codeql: "false"
+
+  # ---------------------------------------------------------------------------
+  # Release
+  # ---------------------------------------------------------------------------
 
   release:
-    if: ${{ inputs.run-release != 'false' }}
     uses: wphillipmoore/standard-actions/.github/workflows/ci-release.yml@v1.5
-    permissions:
-      contents: read
+    with:
+      language: shell
+      run-release: ${{ inputs.run-release != false }}
