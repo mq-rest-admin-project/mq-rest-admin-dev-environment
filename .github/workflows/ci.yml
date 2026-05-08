@@ -27,6 +27,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Install standard-tooling
+        uses: wphillipmoore/standard-actions/actions/setup/standard-tooling@v1.5.11
+
       - name: Run common quality checks
         run: st-validate --check common
 
