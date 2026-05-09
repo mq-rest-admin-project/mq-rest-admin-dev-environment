@@ -1,3 +1,4 @@
+# https://github.com/wphillipmoore/standard-actions/blob/develop/.github/workflows/README.md
 name: CI
 
 on:
@@ -19,21 +20,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
-  # ---------------------------------------------------------------------------
-  # Quality
-  # ---------------------------------------------------------------------------
-
   quality:
     uses: wphillipmoore/standard-actions/.github/workflows/ci-quality.yml@v1.5
     with:
       language: shell
       versions: '["latest"]'
       container-suffix: base
-
-  # ---------------------------------------------------------------------------
-  # Security and standards
-  # ---------------------------------------------------------------------------
 
   security:
     uses: wphillipmoore/standard-actions/.github/workflows/ci-security.yml@v1.5
@@ -46,12 +38,8 @@ jobs:
       contents: read
       security-events: write
 
-  # ---------------------------------------------------------------------------
-  # Release
-  # ---------------------------------------------------------------------------
-
-  release:
-    uses: wphillipmoore/standard-actions/.github/workflows/ci-release.yml@v1.5
+  version:
+    uses: wphillipmoore/standard-actions/.github/workflows/ci-version-bump.yml@v1.5
     with:
       language: shell
-      run-release: ${{ inputs.run-release != false }}
+      run-release: ${{ inputs.run-release != 'false' }}
