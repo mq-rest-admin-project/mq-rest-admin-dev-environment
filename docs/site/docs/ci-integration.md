@@ -16,7 +16,7 @@ jobs:
 
       - name: Setup MQ
         id: mq
-        uses: wphillipmoore/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
+        uses: mq-rest-admin-project/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
         with:
           verify: 'true'
 
@@ -60,7 +60,7 @@ environments in the same workflow:
 ```yaml
 - name: Setup MQ
   id: mq
-  uses: wphillipmoore/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
+  uses: mq-rest-admin-project/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
   with:
     project-name: 'my-tests'
     qm1-mq-port: '11414'

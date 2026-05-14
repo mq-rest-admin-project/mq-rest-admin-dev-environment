@@ -3,9 +3,9 @@
 This file provides guidance to Claude Code (claude.ai/code) when
 working with code in this repository.
 
-**Standards reference**: <https://github.com/wphillipmoore/standards-and-conventions>
-— active standards documentation lives in the standard-tooling repository under `docs/`.
-Repository profile: `standard-tooling.toml`.
+**Standards reference**: <https://github.com/vergil-project/vergil-tooling>
+— active standards documentation lives in the vergil-tooling repository under `docs/`.
+Repository profile: `vergil.toml`.
 
 ## Memory management
 
@@ -16,9 +16,9 @@ plugin/skill issue) before writing. See that file for the full
 workflow.
 
 Available skills:
-- `/standard-tooling:memory-init` — set up or update the policy header
+- `/vergil:memory-init` — set up or update the policy header
   in a project's `MEMORY.md`.
-- `/standard-tooling:memory-audit` — structured collaborative review
+- `/vergil:memory-audit` — structured collaborative review
   of memory files.
 
 ## Parallel AI agent development
@@ -29,9 +29,9 @@ while preserving shared project memory (which Claude Code derives from the
 session's starting CWD).
 
 **Canonical spec:**
-[`standard-tooling/docs/specs/worktree-convention.md`](https://github.com/wphillipmoore/standard-tooling/blob/develop/docs/specs/worktree-convention.md)
+[`vergil-tooling/docs/specs/worktree-convention.md`](https://github.com/vergil-project/vergil-tooling/blob/develop/docs/specs/worktree-convention.md)
 — full rationale, trust model, failure modes, and memory-path implications.
-The canonical text lives in `standard-tooling`; this section is the local
+The canonical text lives in `vergil-tooling`; this section is the local
 on-ramp.
 
 ### Structure
@@ -109,9 +109,9 @@ a real MQ queue manager.
 ### Standard Tooling
 
 ```bash
-cd ../standard-tooling && uv sync                                                # Install standard-tooling
-export PATH="../standard-tooling/.venv/bin:../standard-tooling/scripts/bin:$PATH" # Put tools on PATH
-git config core.hooksPath ../standard-tooling/scripts/lib/git-hooks               # Enable git hooks
+cd ../vergil-tooling && uv sync                                                  # Install vergil-tooling
+export PATH="../vergil-tooling/.venv/bin:../vergil-tooling/scripts/bin:$PATH"     # Put tools on PATH
+git config core.hooksPath ../vergil-tooling/scripts/lib/git-hooks                 # Enable git hooks
 ```
 
 ### Environment Setup
@@ -169,7 +169,7 @@ Consuming repositories depend on these stable details:
 
 - **Local development**: Consuming repos reference this repo as a
   sibling directory (`../mq-rest-admin-dev-environment`) — same pattern as
-  `../standards-and-conventions`
+  `../vergil-tooling`
 - **CI**: Reusable GitHub Actions workflow (or composite action) that
   starts the MQ containers, seeds them, and makes them available to
   the calling workflow's test jobs
@@ -192,7 +192,7 @@ seed/
 docs/
     plans/               # Decision documents
     repository-standards.md
-    standards-and-conventions.md
+    vergil-tooling.md
 ```
 
 ## Key References
