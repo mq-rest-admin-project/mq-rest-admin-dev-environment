@@ -14,7 +14,7 @@
   for explicit approval to proceed on `develop`.
 - If approval is granted to work on `develop`, call it out in the
   response and proceed only for that user-approved scope.
-- Enable repository git hooks before committing: `git config core.hooksPath .githooks`.
+- The Claude Code hook guard (`.claude/hooks/guard.sh`) blocks raw `git`/`gh` — use `vrg-git`/`vrg-gh`.
 
 ## Local validation
 
