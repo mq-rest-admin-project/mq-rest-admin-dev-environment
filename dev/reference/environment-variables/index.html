@@ -1476,6 +1476,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#readiness-gate-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Readiness gate variables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#test-gate-variables" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1582,6 +1593,17 @@
     <span class="md-ellipsis">
       
         Script variables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readiness-gate-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Readiness gate variables
       
     </span>
   </a>
@@ -1704,6 +1726,35 @@ how they reference the dev environment.</p>
 <td><code>MQ_ADMIN_PASSWORD</code></td>
 <td><code>mqadmin</code></td>
 <td>Admin password for REST API authentication</td>
+</tr>
+</tbody>
+</table>
+<h2 id="readiness-gate-variables">Readiness gate variables<a class="headerlink" href="#readiness-gate-variables" title="Permanent link">&para;</a></h2>
+<p>Used by <code>mq_wait_ready.sh</code> (called from <code>mq_start.sh</code>, <code>mq_seed.sh</code>, and
+<code>mq_verify.sh</code>) to tune the startup stability window.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MQ_READY_TIMEOUT_SECONDS</code></td>
+<td><code>120</code></td>
+<td>Hard timeout before the gate fails with an explicit "not ready" error</td>
+</tr>
+<tr>
+<td><code>MQ_READY_INTERVAL_SECONDS</code></td>
+<td><code>3</code></td>
+<td>Seconds between readiness probe rounds</td>
+</tr>
+<tr>
+<td><code>MQ_READY_CONSECUTIVE</code></td>
+<td><code>3</code></td>
+<td>Consecutive healthy rounds (across both queue managers) required before proceeding</td>
 </tr>
 </tbody>
 </table>
