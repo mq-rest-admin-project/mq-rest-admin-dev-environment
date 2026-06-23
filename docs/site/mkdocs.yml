@@ -1,7 +1,9 @@
 site_name: mq-rest-admin-dev-environment
-site_url: https://wphillipmoore.github.io/mq-rest-admin-dev-environment/
-site_description: Shared dockerized IBM MQ test environment for integration testing across the mq-rest-admin project family
-repo_url: https://github.com/wphillipmoore/mq-rest-admin-dev-environment
+site_url: https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/
+site_description: >-
+  Shared dockerized IBM MQ test environment for integration testing
+  across the mq-rest-admin project family
+repo_url: https://github.com/mq-rest-admin-project/mq-rest-admin-dev-environment
 repo_name: mq-rest-admin-dev-environment
 edit_uri: ""
 
@@ -35,6 +37,9 @@ theme:
 extra:
   version:
     provider: mike
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search

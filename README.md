@@ -21,9 +21,9 @@ against a real MQ queue manager.
 
 ## Consuming repositories
 
-- [pymqrest](https://github.com/wphillipmoore/pymqrest) — Python
+- [pymqrest](https://github.com/mq-rest-admin-project/pymqrest) — Python
   wrapper for the MQ administrative REST API
-- [mq-rest-admin](https://github.com/wphillipmoore/mq-rest-admin) —
+- [mq-rest-admin](https://github.com/mq-rest-admin-project/mq-rest-admin) —
   Java port of pymqrest
 - pymqpcf — Python wrapper for the MQ PCF API (planned)
 
@@ -55,7 +55,7 @@ Consuming repositories depend on these stable details:
 | QM2 MQ listener | `localhost:1415` |
 | Admin user | `mqadmin` / `mqadmin` |
 | Reader user | `mqreader` / `mqreader` |
-| Docker image | `icr.io/ibm-messaging/mq:latest` |
+| Docker image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
 | Docker network | `mq-dev-net` |
 
 ## Seed objects
@@ -124,7 +124,7 @@ jobs:
 
       - name: Setup MQ
         id: mq
-        uses: wphillipmoore/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
+        uses: mq-rest-admin-project/mq-rest-admin-dev-environment/.github/actions/setup-mq@main
         with:
           verify: 'true'  # default; set 'false' to skip verification
 
@@ -192,7 +192,7 @@ config/
 docs/
   plans/                   # Decision documents
   repository-standards.md
-  standards-and-conventions.md
+  vergil-tooling.md
 scripts/
   git-hooks/               # Git hook scripts
   mq_start.sh              # Start containers + wait for readiness

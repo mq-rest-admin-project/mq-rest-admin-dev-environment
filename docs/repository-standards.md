@@ -3,8 +3,6 @@
 ## Table of Contents
 
 - [Pre-flight checklist](#pre-flight-checklist)
-- [AI co-authors](#ai-co-authors)
-- [Repository profile](#repository-profile)
 - [Local validation](#local-validation)
 - [Tooling requirement](#tooling-requirement)
 - [Merge strategy override](#merge-strategy-override)
@@ -16,30 +14,12 @@
   for explicit approval to proceed on `develop`.
 - If approval is granted to work on `develop`, call it out in the
   response and proceed only for that user-approved scope.
-- Enable repository git hooks before committing: `git config core.hooksPath scripts/git-hooks`.
-
-## AI co-authors
-
-- Co-Authored-By: wphillipmoore-codex <255923655+wphillipmoore-codex@users.noreply.github.com>
-- Co-Authored-By: wphillipmoore-claude <255925739+wphillipmoore-claude@users.noreply.github.com>
-
-## Repository profile
-
-- repository_type: infrastructure
-- versioning_scheme: semver
-- branching_model: library-release
-- release_model: tagged-release
-- supported_release_lines: current only
-- primary_language: shell
+- The Claude Code hook guard (`.claude/hooks/guard.sh`) blocks raw `git`/`gh` — use `vrg-git`/`vrg-gh`.
 
 ## Local validation
 
 ```bash
-# Validate the MQ environment is running and seeded correctly
-scripts/mq_verify.sh
-
-# Lint documentation
-markdownlint '**/*.md' --ignore node_modules
+vrg-docker-run -- vrg-validate
 ```
 
 ## Tooling requirement
@@ -48,7 +28,7 @@ Required for daily workflow:
 
 - Docker and Docker Compose (for running the MQ containers)
 - `curl` (for REST API health checks and verification)
-- `markdownlint` (required for docs validation and PR pre-submission)
+- `vrg-docker-run` (runs validation inside dev container)
 
 ## Merge strategy override
 
@@ -67,39 +47,36 @@ submission. Do not construct commit messages or PR bodies manually.
 ### Committing
 
 ```bash
-st-commit \
-  --type TYPE --message MESSAGE --agent AGENT \
+vrg-commit \
+  --type TYPE --message MESSAGE \
   [--scope SCOPE] [--body BODY]
 ```
 
 - `--type` (required): one of
   `feat|fix|docs|style|refactor|test|chore|ci|build`
 - `--message` (required): commit description
-- `--agent` (required): `claude` or `codex`
 - `--scope` (optional): conventional commit scope
 - `--body` (optional): detailed commit body
 
-The script resolves the correct `Co-Authored-By` identity from the
-[AI co-authors](#ai-co-authors) section and the git hooks validate
-the result.
+The script resolves the correct `Co-Authored-By` identity from
+`vergil.toml` and the git hooks validate the result.
 
 ### Submitting PRs
 
 ```bash
-st-submit-pr \
+vrg-submit-pr \
   --issue NUMBER --summary TEXT \
   [--linkage KEYWORD] [--title TEXT] \
-  [--notes TEXT] [--docs-only] [--dry-run]
+  [--notes TEXT] [--dry-run]
 ```
 
 - `--issue` (required): GitHub issue number (just the number)
 - `--summary` (required): one-line PR summary
-- `--linkage` (optional, default: `Fixes`):
+- `--linkage` (optional, default: `Ref`):
   `Fixes|Closes|Resolves|Ref`
 - `--title` (optional): PR title (default: most recent commit
   subject)
 - `--notes` (optional): additional notes
-- `--docs-only` (optional): applies docs-only testing exception
 - `--dry-run` (optional): print generated PR without executing
 
 The script detects the target branch and merge strategy

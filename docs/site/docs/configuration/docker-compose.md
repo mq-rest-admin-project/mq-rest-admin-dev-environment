@@ -9,7 +9,7 @@ and defines two IBM MQ container services with REST API access.
 
 | Property | Value |
 | --- | --- |
-| Image | `icr.io/ibm-messaging/mq:latest` |
+| Image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
 | Hostname | `qm1` |
 | MQ listener port | `1414` (host: `1414`) |
 | REST API port | `9443` (host: `9443`) |
@@ -19,7 +19,7 @@ and defines two IBM MQ container services with REST API access.
 
 | Property | Value |
 | --- | --- |
-| Image | `icr.io/ibm-messaging/mq:latest` |
+| Image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
 | Hostname | `qm2` |
 | MQ listener port | `1414` (host: `1415`) |
 | REST API port | `9443` (host: `9444`) |
@@ -32,7 +32,7 @@ overrides:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `MQ_IMAGE` | `icr.io/ibm-messaging/mq:latest` | Container image |
+| `MQ_IMAGE` | `icr.io/ibm-messaging/mq:9.4.5.1-r1` | Container image |
 | `QM1_MQ_PORT` | `1414` | Host port for QM1 MQ listener |
 | `QM1_REST_PORT` | `9443` | Host port for QM1 REST API |
 | `QM2_MQ_PORT` | `1415` | Host port for QM2 MQ listener |

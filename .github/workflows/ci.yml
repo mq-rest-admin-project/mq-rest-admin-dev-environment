@@ -1,51 +1,52 @@
-name: CI - Test and Validate
+# https://github.com/vergil-project/vergil-actions/blob/develop/.github/workflows/README.md
+name: CI
 
 on:
   pull_request:
+  workflow_call:
+    inputs:
+      run-security:
+        type: boolean
+        default: true
+      run-release:
+        type: boolean
+        default: true
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  standards-compliance:
-    name: "ci: standards-compliance"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+  quality:
+    uses: vergil-project/vergil-actions/.github/workflows/ci-quality.yml@v2.1
+    with:
+      language: shell
+      versions: '["latest"]'
+      container-suffix: base
+      container-tag: 'latest'
 
-      - name: Validate standards
-        uses: wphillipmoore/standard-actions/actions/standards-compliance@v1.1
+  security:
+    uses: vergil-project/vergil-actions/.github/workflows/ci-security.yml@v2.1
+    with:
+      language: shell
+      run-standards: ${{ inputs.run-release != 'false' }}
+      run-security: ${{ inputs.run-security != 'false' }}
+      run-codeql: false
+      container-suffix: base
+      container-tag: 'latest'
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
-  shellcheck:
-    name: "ci: shellcheck"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Run shellcheck
-        run: |
-          files=$(find scripts -type f \( -name '*.sh' -o -path '*/git-hooks/*' \) | sort)
-          if [ -n "$files" ]; then
-            echo "$files" | xargs shellcheck
-          else
-            echo "No shell scripts found."
-          fi
-
-  actionlint:
-    name: "ci: actionlint"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Install actionlint
-        run: bash <(curl -s https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-
-      - name: Run actionlint
-        run: ./actionlint
+  version:
+    uses: vergil-project/vergil-actions/.github/workflows/ci-version-bump.yml@v2.1
+    with:
+      language: shell
+      run-release: ${{ inputs.run-release != 'false' }}
+      container-suffix: base
+      container-tag: 'latest'

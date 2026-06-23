@@ -10,7 +10,7 @@ before running `mq_start.sh` to override defaults.
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `MQ_IMAGE` | `icr.io/ibm-messaging/mq:latest` | IBM MQ container image |
+| `MQ_IMAGE` | `icr.io/ibm-messaging/mq:9.4.5.1-r1` | IBM MQ container image |
 | `QM1_MQ_PORT` | `1414` | Host port for QM1 MQ listener |
 | `QM1_REST_PORT` | `9443` | Host port for QM1 REST API |
 | `QM2_MQ_PORT` | `1415` | Host port for QM2 MQ listener |

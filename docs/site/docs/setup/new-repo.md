@@ -69,7 +69,7 @@ handles starting, seeding, and verifying the MQ environment:
 - name: Checkout MQ dev environment
   uses: actions/checkout@v4
   with:
-    repository: wphillipmoore/mq-rest-admin-dev-environment
+    repository: mq-rest-admin-project/mq-rest-admin-dev-environment
     ref: main
     path: .mq-dev-env
 

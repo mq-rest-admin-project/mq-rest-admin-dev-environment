@@ -1,7 +1,8 @@
 # Agent Instructions
 
-<!-- include: docs/standards-and-conventions.md -->
-<!-- include: ./docs/repository-standards.md -->
+**Standards reference**: <https://github.com/vergil-project/vergil-tooling>
+— active standards documentation lives in the vergil-tooling repository under `docs/`.
+Repository profile: `vergil.toml`.
 
 ## User Overrides (Optional)
 
@@ -12,15 +13,15 @@ briefly and continue.
 ## Canonical Standards
 
 This repository follows the canonical standards and conventions in the
-`standards-and-conventions` repository.
+`vergil-tooling` repository.
 
 Resolve the local path (preferred):
 
-- `../standards-and-conventions`
+- `../vergil-tooling`
 
 If the local path is unavailable, use the canonical web source:
 
-- <https://github.com/wphillipmoore/standards-and-conventions>
+- <https://github.com/vergil-project/vergil-tooling>
 
 If the canonical standards cannot be retrieved, treat it as a fatal
 exception and stop.

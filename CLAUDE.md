@@ -1,70 +1,112 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when
-working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Auto-memory policy
+**Standards reference**: <https://github.com/vergil-project/vergil-tooling>
+— active standards documentation lives in the vergil-tooling repository under `docs/`.
+Repository profile: `vergil.toml`.
 
-**Do NOT use MEMORY.md.** Claude Code's auto-memory feature stores behavioral
-rules outside of version control, making them invisible to code review,
-inconsistent across repos, and unreliable across sessions. All behavioral rules,
-conventions, and workflow instructions belong in managed, version-controlled
-documentation (CLAUDE.md, AGENTS.md, skills, or docs/).
+## Memory management
 
-If you identify a pattern, convention, or rule worth preserving:
+Memory is allowed with human approval. The authoritative policy is in
+the user's global `~/.claude/CLAUDE.md` — agents must propose memory
+writes and suggest a destination (repo memory, global CLAUDE.md, or
+plugin/skill issue) before writing. See that file for the full
+workflow.
 
-1. **Stop.** Do not write to MEMORY.md.
-2. **Discuss with the user** what you want to capture and why.
-3. **Together, decide** the correct managed location (CLAUDE.md, a skill file,
-   standards docs, or a new issue to track the gap).
+Available skills:
+- `/vergil:memory-init` — set up or update the policy header
+  in a project's `MEMORY.md`.
+- `/vergil:memory-audit` — structured collaborative review
+  of memory files.
 
-This policy exists because MEMORY.md is per-directory and per-machine — it
-creates divergent agent behavior across the multi-repo environment this project
-operates in. Consistency requires all guidance to live in shared, reviewable
-documentation.
+## Parallel AI agent development
+
+This repository supports running multiple Claude Code agents in parallel via
+git worktrees. The convention keeps parallel agents' working trees isolated
+while preserving shared project memory (which Claude Code derives from the
+session's starting CWD).
+
+**Canonical spec:**
+[`vergil-tooling/docs/specs/worktree-convention.md`](https://github.com/vergil-project/vergil-tooling/blob/develop/docs/specs/worktree-convention.md)
+— full rationale, trust model, failure modes, and memory-path implications.
+The canonical text lives in `vergil-tooling`; this section is the local
+on-ramp.
+
+### Structure
+
+```text
+<project-root>/                              ← sessions ALWAYS start here
+  .git/
+  CLAUDE.md, …                               ← main worktree (usually `develop`)
+  .worktrees/                                ← container for parallel worktrees
+    issue-<N>-<short-slug>/                  ← worktree on feature/<N>-<short-slug>
+    …
+```
+
+### Rules
+
+1. **Sessions always start at the project root.**
+   Never start Claude from inside `.worktrees/<name>/`. This keeps the
+   memory-path slug stable and shared.
+2. **Each parallel agent is assigned exactly one worktree.** The session
+   prompt names the worktree (see Agent prompt contract below).
+   - For Read / Edit / Write tools: use the worktree's absolute path.
+   - For Bash commands that touch files: `cd` into the worktree first,
+     or use absolute paths.
+3. **The main worktree is read-only.** All edits flow through a worktree
+   on a feature branch — the logical endpoint of the standing
+   "no direct commits to develop" policy.
+4. **One worktree per issue.** Don't stack in-flight issues. When a
+   branch lands, remove the worktree before starting the next.
+5. **Naming: `issue-<N>-<short-slug>`.** `<N>` is the GitHub issue
+   number; `<short-slug>` is 2–4 kebab-case tokens.
+
+### Agent prompt contract
+
+When launching a parallel-agent session, use this template (fill in the
+placeholders):
+
+```text
+You are working on issue #<N>: <issue title>.
+
+Your worktree is: <project-root>/.worktrees/issue-<N>-<slug>/
+Your branch is:   feature/<N>-<slug>
+
+Rules for this session:
+- Do all git operations from inside your worktree:
+    cd <absolute-worktree-path> && vrg-git <command>
+- For Read / Edit / Write tools, use the absolute worktree path.
+- For Bash commands that touch files, cd into the worktree first
+  or use absolute paths.
+- Do not edit files at the project root. The main worktree is
+  read-only — all changes flow through your worktree on your
+  feature branch.
+- When you need to run validation, run it from inside your worktree
+  (vrg-container-run mounts the current directory).
+```
+
+All fields are required.
 
 ## Shell command policy
 
-**Do NOT use heredocs** (`<<EOF` / `<<'EOF'`) for multi-line arguments to CLI
-tools such as `gh`, `git commit`, or `curl`. Heredocs routinely fail due to
-shell escaping issues with apostrophes, backticks, and special characters.
-Always write multi-line content to a temporary file and pass it via `--body-file`
-or `--file` instead.
+Use `vrg-git` instead of `git` for all git operations. Use `vrg-gh`
+instead of `gh` for all GitHub CLI operations. These wrappers enforce
+subcommand allowlists, flag deny lists, and credential selection.
 
-## Documentation Strategy
+Raw `git` and `gh` are denied by the permission model. If a command
+is not available through the wrappers, explain the situation to the
+human who can run it directly via `! <command>` in the prompt.
 
-This repository uses two complementary approaches for AI agent
-guidance:
+## Validation
 
-- **AGENTS.md**: Generic AI agent instructions using include
-  directives to force documentation indexing. Contains canonical
-  standards references, shared skills loading, and user override
-  support.
-- **CLAUDE.md** (this file): Claude Code-specific guidance with
-  prescriptive commands, architecture details, and development
-  workflows optimized for `/init`.
+```bash
+vrg-container-run -- vrg-validate
+```
 
-### Integration Approach
-
-**For Claude Code** (`/init` command):
-
-1. Read CLAUDE.md (this file) first for optimized quick-start guidance
-2. Process include directives to load repository standards
-3. Reference AGENTS.md for shared skills and canonical standards
-   location
-4. Apply layered standards: canonical -> project-specific -> user
-   overrides
-
-**For other AI agents** (Codex, generic LLMs):
-
-1. Read AGENTS.md first as the primary entry point
-2. Process include directives to load all referenced documentation
-3. Resolve canonical standards repo path (local or GitHub)
-4. Load shared skills from standards repo
-5. Apply user overrides from `~/AGENTS.md` if present
-
-<!-- include: docs/standards-and-conventions.md -->
-<!-- include: docs/repository-standards.md -->
+This is the **only** validation command. Do not run individual linters,
+formatters, or other tools outside of `vrg-validate`. If a tool is not
+invoked by `vrg-validate`, it is not part of the validation pipeline.
 
 ## Project Overview
 
@@ -83,19 +125,7 @@ a real MQ queue manager.
 - `mq-rest-admin` — Java port of pymqrest
 - `pymqpcf` — Python wrapper for the MQ PCF API (planned)
 
-**Canonical Standards**: This repository follows standards at
-<https://github.com/wphillipmoore/standards-and-conventions>
-(local path: `../standards-and-conventions` if available)
-
 ## Development Commands
-
-### Standard Tooling
-
-```bash
-cd ../standard-tooling && uv sync                                                # Install standard-tooling
-export PATH="../standard-tooling/.venv/bin:../standard-tooling/scripts/bin:$PATH" # Put tools on PATH
-git config core.hooksPath ../standard-tooling/scripts/lib/git-hooks               # Enable git hooks
-```
 
 ### Environment Setup
 
@@ -111,13 +141,6 @@ scripts/mq_seed.sh           # Run MQSC seed commands on both queue managers
 scripts/mq_verify.sh         # Verify seed objects exist via REST API
 scripts/mq_reset.sh          # Stop + start + re-seed (full reset)
 scripts/mq_stop.sh           # Stop and remove containers
-```
-
-### Validation
-
-```bash
-scripts/mq_verify.sh         # Verify MQ environment is correctly seeded
-markdownlint '**/*.md' --ignore node_modules   # Lint documentation
 ```
 
 ## Architecture
@@ -136,7 +159,7 @@ Consuming repositories depend on these stable details:
 | QM2 MQ listener | `localhost:1415` |
 | Admin user | `mqadmin` / `mqadmin` |
 | Reader user | `mqreader` / `mqreader` |
-| Docker image | `icr.io/ibm-messaging/mq:latest` (IBM MQ for Developers) |
+| Docker image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` (IBM MQ for Developers) |
 | Docker network | `mq-dev-net` |
 
 ### Seed Data Strategy
@@ -152,7 +175,7 @@ Consuming repositories depend on these stable details:
 
 - **Local development**: Consuming repos reference this repo as a
   sibling directory (`../mq-rest-admin-dev-environment`) — same pattern as
-  `../standards-and-conventions`
+  `../vergil-tooling`
 - **CI**: Reusable GitHub Actions workflow (or composite action) that
   starts the MQ containers, seeds them, and makes them available to
   the calling workflow's test jobs
@@ -175,85 +198,10 @@ seed/
 docs/
     plans/               # Decision documents
     repository-standards.md
-    standards-and-conventions.md
+    vergil-tooling.md
 ```
-
-## Repository Standards Quick Reference
-
-The include directives at the top of this file load the full
-repository standards. Key highlights for quick reference:
-
-**Pre-flight Checklist**:
-
-- Check current branch: `git status -sb`
-- If on `develop`, create `feature/*` branch or get explicit approval
-- Enable git hooks: `git config core.hooksPath ../standard-tooling/scripts/lib/git-hooks`
-
-See `docs/repository-standards.md` for complete details.
-
-## Documentation Indexing Strategy
-
-This repository uses `<!-- include: path/to/file.md -->` directives
-to force documentation indexing. When you encounter these directives:
-
-1. **Read the referenced files** to understand the full context
-2. **Apply layered standards** in order:
-   - Canonical standards (from `standards-and-conventions` repo)
-   - Project-specific standards (`docs/repository-standards.md`)
-   - User overrides (`~/AGENTS.md` if present)
-3. **Load shared skills** from
-   `<standards-repo-path>/skills/**/SKILL.md`
-
-## Documentation Structure
-
-- `README.md` - Project overview and quick start
-- `AGENTS.md` - Generic AI agent instructions with include directives
-- `CLAUDE.md` - This file, Claude Code-specific guidance
-- `docs/repository-standards.md` - Project-specific standards
-  (included from AGENTS.md)
-- `docs/standards-and-conventions.md` - Canonical standards reference
-  (includes external repo)
-
-## Commit and PR Scripts
-
-**NEVER use raw `git commit`** — always use `st-commit`.
-**NEVER use raw `gh pr create`** — always use `st-submit-pr`.
-
-### Committing
-
-```bash
-st-commit --type feat --message "add new seed data" --agent claude
-st-commit --type fix --message "correct container startup" --agent claude
-```
-
-- `--type` (required): `feat|fix|docs|style|refactor|test|chore|ci|build`
-- `--message` (required): commit description
-- `--agent` (required): `claude` or `codex` — resolves the correct `Co-Authored-By` identity
-- `--scope` (optional): conventional commit scope
-- `--body` (optional): detailed commit body
-
-### Submitting PRs
-
-```bash
-st-submit-pr --issue 42 --summary "Add new seed data for testing"
-st-submit-pr --issue 42 --linkage Ref --summary "Update docs" --docs-only
-```
-
-- `--issue` (required): GitHub issue number (just the number)
-- `--summary` (required): one-line PR summary
-- `--linkage` (optional, default: `Fixes`): `Fixes|Closes|Resolves|Ref`
-- `--title` (optional): PR title (default: most recent commit subject)
-- `--notes` (optional): additional notes
-- `--docs-only` (optional): applies docs-only testing exception
-- `--dry-run` (optional): print generated PR without executing
 
 ## Key References
-
-**Canonical Standards**:
-<https://github.com/wphillipmoore/standards-and-conventions>
-
-- Local path (preferred): `../standards-and-conventions`
-- Load all skills from: `<standards-repo-path>/skills/**/SKILL.md`
 
 **Consuming repositories**:
 
@@ -264,6 +212,3 @@ st-submit-pr --issue 42 --linkage Ref --summary "Update docs" --docs-only
 
 - IBM MQ 9.4 administrative REST API
 - IBM MQ for Developers container image documentation
-
-**User Overrides**: `~/AGENTS.md` (optional, applied if present and
-readable)

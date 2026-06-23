@@ -1,0 +1,29 @@
+# https://github.com/vergil-project/vergil-actions/blob/develop/.github/workflows/README.md
+name: CD
+
+on:
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+
+permissions:
+  attestations: write
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  docs:
+    uses: vergil-project/vergil-actions/.github/workflows/cd-docs.yml@v2.1
+    with:
+      pre-deploy-command: >-
+        git clone --depth 1 --branch develop
+        https://github.com/mq-rest-admin-project/mq-rest-admin-common.git
+        .mq-rest-admin-common
+    permissions:
+      contents: write
+
+  release:
+    if: github.ref == 'refs/heads/main'
+    uses: vergil-project/vergil-actions/.github/workflows/cd-release.yml@v2.1
+    secrets: inherit

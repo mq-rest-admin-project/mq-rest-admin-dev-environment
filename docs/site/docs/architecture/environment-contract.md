@@ -16,7 +16,7 @@ coordination with all language libraries.
 | QM2 MQ listener | `localhost:1415` |
 | Admin user | `mqadmin` / `mqadmin` |
 | Reader user | `mqreader` / `mqreader` |
-| Docker image | `icr.io/ibm-messaging/mq:latest` |
+| Docker image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
 | Docker network | `mq-dev-net` |
 
 ## Seed objects
@@ -44,8 +44,8 @@ See [CI Integration](../ci-integration.md) for usage details.
 This environment is used by the language-specific libraries in the
 mq-rest-admin project:
 
-- [mq-rest-admin-python](https://github.com/wphillipmoore/mq-rest-admin-python)
-- [mq-rest-admin-java](https://github.com/wphillipmoore/mq-rest-admin-java)
-- [mq-rest-admin-go](https://github.com/wphillipmoore/mq-rest-admin-go)
-- [mq-rest-admin-ruby](https://github.com/wphillipmoore/mq-rest-admin-ruby)
-- [mq-rest-admin-rust](https://github.com/wphillipmoore/mq-rest-admin-rust)
+- [mq-rest-admin-python](https://github.com/mq-rest-admin-project/mq-rest-admin-python)
+- [mq-rest-admin-java](https://github.com/mq-rest-admin-project/mq-rest-admin-java)
+- [mq-rest-admin-go](https://github.com/mq-rest-admin-project/mq-rest-admin-go)
+- [mq-rest-admin-ruby](https://github.com/mq-rest-admin-project/mq-rest-admin-ruby)
+- [mq-rest-admin-rust](https://github.com/mq-rest-admin-project/mq-rest-admin-rust)
