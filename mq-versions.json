@@ -1,0 +1,13 @@
+{
+  "default": "9.4.5",
+  "versions": {
+    "9.4.5": {
+      "image": "icr.io/ibm-messaging/mq:9.4.5.1-r1",
+      "caps": []
+    },
+    "10.0": {
+      "image": "icr.io/ibm-messaging/mq:10.0.0.0-r1",
+      "caps": ["chstatus-quantum-safe"]
+    }
+  }
+}
