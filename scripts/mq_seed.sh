@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Don't seed until both queue managers serve requests — seeding (and
+# the verify/tests that follow) must not race container startup.
+scripts/mq_wait_ready.sh
+
 # runmqsc returns the count of failed commands as its exit code.
 # START CHANNEL fails harmlessly when the channel is already running,
 # so tolerate non-zero exits here.  Output is still printed for

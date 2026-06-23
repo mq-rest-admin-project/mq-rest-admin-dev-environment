@@ -196,6 +196,7 @@ docs/
 scripts/
   git-hooks/               # Git hook scripts
   mq_start.sh              # Start containers + wait for readiness
+  mq_wait_ready.sh         # Shared readiness gate (stability window)
   mq_seed.sh               # Run MQSC seed scripts
   mq_verify.sh             # Verify seed objects via REST API
   mq_reset.sh              # Full reset (stop + remove volumes)
