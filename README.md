@@ -55,7 +55,7 @@ Consuming repositories depend on these stable details:
 | QM2 MQ listener | `localhost:1415` |
 | Admin user | `mqadmin` / `mqadmin` |
 | Reader user | `mqreader` / `mqreader` |
-| Docker image | `icr.io/ibm-messaging/mq:latest` |
+| Docker image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
 | Docker network | `mq-dev-net` |
 
 ## Seed objects
