@@ -56,6 +56,8 @@ runs:
       working-directory: ${{ github.action_path }}/../../..
       env:
         COMPOSE_PROJECT_NAME: ${{ inputs.project-name }}
+        QM1_REST_PORT: ${{ inputs.qm1-rest-port }}
+        QM2_REST_PORT: ${{ inputs.qm2-rest-port }}
       run: scripts/mq_seed.sh
 
     - name: Verify MQ environment
