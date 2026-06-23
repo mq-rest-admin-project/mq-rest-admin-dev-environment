@@ -301,13 +301,14 @@ will "discover":
    `mqweb` may change; watch for handshake issues in the REST clients.
    This one is genuinely unverified, unlike (1).
 
-**Open action, not resolved by this spec:** beyond `SSLQS`/`SSLQSR`,
-check the IBM admin REST API changelog for *other* additive 10.0
-attributes the mapper will need, so #217 is scoped completely rather than
-fixing only the attributes that happened to surface first. The MQ 10.0
-change analysis describes feature areas (HA/CRR, Kafka, Console,
+**Open action, tracked in `mq-rest-admin-common#219`:** beyond
+`SSLQS`/`SSLQSR`, enumerate *all* additive/changed 10.0 admin REST
+attributes from the IBM changelog so `#217` is scoped completely rather
+than fixing only the attributes that happened to surface first. The MQ
+10.0 change analysis describes feature areas (HA/CRR, Kafka, Console,
 containers) largely orthogonal to the admin REST API, but that is an
-inference, not a confirmed read of the changelog.
+inference, not a confirmed read of the changelog — which is exactly what
+#219 will resolve.
 
 Reference: IBM MQ features-by-version table —
 <https://www.ibm.com/docs/en/ibm-mq/10.0.x?topic=information-mq-features-by-version>
@@ -340,7 +341,9 @@ the repo docs rather than inline; flipping `default` to `10.0` is a
 one-line follow-up gated on #217.
 
 Related history/tracking: #147 (origin of the pin), #148 (the pin
-itself), `mq-rest-admin-common#217` (mapper enablement).
+itself), `mq-rest-admin-common#217` (mapper enablement),
+`mq-rest-admin-common#219` (complete enumeration of changed 10.0 REST
+attributes that scopes #217).
 
 ## Out of scope (named, not designed here)
 
