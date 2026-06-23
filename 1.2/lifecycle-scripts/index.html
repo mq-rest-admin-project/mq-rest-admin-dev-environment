@@ -661,6 +661,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../releases/v1.2.4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2.4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../releases/v1.2.3/" class="md-nav__link">
         
   
@@ -1354,6 +1382,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#mq_wait_readysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mq_wait_ready.sh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#mq_seedsh" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1652,6 +1691,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#mq_wait_readysh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mq_wait_ready.sh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#mq_seedsh" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1780,16 +1830,35 @@ become ready.</p>
 <p>The script:</p>
 <ol>
 <li>Runs <code>docker compose up -d</code> using <code>config/docker-compose.yml</code></li>
-<li>Waits for container health checks to pass</li>
-<li>Polls the REST API endpoints until they respond</li>
+<li>Delegates to <code>mq_wait_ready.sh</code> to block until both REST APIs serve
+   requests reliably</li>
 </ol>
+<h3 id="mq_wait_readysh">mq_wait_ready.sh<a class="headerlink" href="#mq_wait_readysh" title="Permanent link">&para;</a></h3>
+<p>Readiness gate shared by <code>mq_start.sh</code>, <code>mq_seed.sh</code>, and <code>mq_verify.sh</code>.
+Polls both queue managers' administrative REST endpoints and only
+returns once <strong>every</strong> queue manager has answered healthily for several
+consecutive rounds (a stability window).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>scripts/mq_wait_ready.sh
+</code></pre></div>
+<p>A single successful probe is not enough: during startup the MQ web
+server answers one request while the queue manager is still
+stabilising, then resets connections moments later (seen downstream as
+<code>SSL_ERROR_SYSCALL</code> / <code>Connection reset by peer</code>). Requiring a stability
+window keeps seed/verify and the consuming repos' tests from racing
+startup. On timeout the script exits non-zero with an explicit
+"queue manager not ready after N seconds" message so a genuine startup
+failure is distinguishable from a slow start.</p>
+<p>Tunable via <a href="../reference/environment-variables/#readiness-gate-variables">environment variables</a>
+(<code>MQ_READY_TIMEOUT_SECONDS</code>, <code>MQ_READY_INTERVAL_SECONDS</code>,
+<code>MQ_READY_CONSECUTIVE</code>).</p>
 <h3 id="mq_seedsh">mq_seed.sh<a class="headerlink" href="#mq_seedsh" title="Permanent link">&para;</a></h3>
 <p>Runs the MQSC seed scripts against both queue managers to create
 all development objects.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>scripts/mq_seed.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>scripts/mq_seed.sh
 </code></pre></div>
 <p>The script:</p>
 <ol>
+<li>Blocks on <code>mq_wait_ready.sh</code> so seeding never races startup</li>
 <li>Copies <code>seed/base-qm1.mqsc</code> into the QM1 container</li>
 <li>Runs <code>runmqsc QM1</code> with the seed file</li>
 <li>Copies <code>seed/base-qm2.mqsc</code> into the QM2 container</li>
@@ -1798,14 +1867,15 @@ all development objects.</p>
 <h3 id="mq_verifysh">mq_verify.sh<a class="headerlink" href="#mq_verifysh" title="Permanent link">&para;</a></h3>
 <p>Verifies that all expected seed objects exist by querying the REST
 API on both queue managers.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>scripts/mq_verify.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>scripts/mq_verify.sh
 </code></pre></div>
-<p>The script checks each object type (queues, channels, topics, etc.)
-and reports success or failure for each.</p>
+<p>The script first blocks on <code>mq_wait_ready.sh</code>, then checks each object
+type (queues, channels, topics, etc.) and reports success or failure
+for each.</p>
 <h3 id="mq_resetsh">mq_reset.sh<a class="headerlink" href="#mq_resetsh" title="Permanent link">&para;</a></h3>
 <p>Stops containers, removes Docker volumes, and restarts the
 environment cleanly.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>scripts/mq_reset.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>scripts/mq_reset.sh
 </code></pre></div>
 <p>The script runs <code>docker compose down -v</code> to remove all container
 data, then calls <code>mq_start.sh</code> and <code>mq_seed.sh</code> to rebuild the
@@ -1818,21 +1888,21 @@ in queues. Use <code>mq_stop.sh</code> if you want to preserve state.</p>
 <h3 id="mq_stopsh">mq_stop.sh<a class="headerlink" href="#mq_stopsh" title="Permanent link">&para;</a></h3>
 <p>Stops and removes the containers but preserves the named Docker
 volumes.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>scripts/mq_stop.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>scripts/mq_stop.sh
 </code></pre></div>
 <p>Queue manager state is retained in the <code>qm1data</code> and <code>qm2data</code>
 volumes and will be available on the next <code>mq_start.sh</code>.</p>
 <h2 id="typical-workflows">Typical workflows<a class="headerlink" href="#typical-workflows" title="Permanent link">&para;</a></h2>
 <h3 id="first-time-setup">First-time setup<a class="headerlink" href="#first-time-setup" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>scripts/mq_start.sh
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>scripts/mq_seed.sh
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>scripts/mq_verify.sh
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>scripts/mq_start.sh
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>scripts/mq_seed.sh
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>scripts/mq_verify.sh
 </code></pre></div>
 <h3 id="daily-restart">Daily restart<a class="headerlink" href="#daily-restart" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>scripts/mq_start.sh<span class="w">    </span><span class="c1"># Volumes preserved, no re-seed needed</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>scripts/mq_start.sh<span class="w">    </span><span class="c1"># Volumes preserved, no re-seed needed</span>
 </code></pre></div>
 <h3 id="clean-reset">Clean reset<a class="headerlink" href="#clean-reset" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>scripts/mq_reset.sh<span class="w">    </span><span class="c1"># Removes volumes and re-seeds</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>scripts/mq_reset.sh<span class="w">    </span><span class="c1"># Removes volumes and re-seeds</span>
 </code></pre></div>
 
 

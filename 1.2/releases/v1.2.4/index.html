@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.2/">
+        <link rel="canonical" href="https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.4/">
       
       
-        <link rel="prev" href="../v1.2.3/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../v1.2.1/">
+        <link rel="next" href="../v1.2.3/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>1.2.1 - mq-rest-admin-dev-environment</title>
+        <title>1.2.4 - mq-rest-admin-dev-environment</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#release-121-2026-03-01" class="md-skip">
+        <a href="#release-124-2026-06-23" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              1.2.1
+              1.2.4
             
           </span>
         </div>
@@ -668,62 +668,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../v1.2.4/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    1.2.4
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../v1.2.3/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    1.2.3
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -743,7 +687,7 @@
   <span class="md-ellipsis">
     
   
-    1.2.1
+    1.2.4
   
 
     
@@ -761,7 +705,7 @@
   <span class="md-ellipsis">
     
   
-    1.2.1
+    1.2.4
   
 
     
@@ -801,6 +745,62 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../v1.2.3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2.3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../v1.2.2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1.2.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1583,12 +1583,13 @@
 
 
 
-<h1 id="release-121-2026-03-01">Release 1.2.1 (2026-03-01)<a class="headerlink" href="#release-121-2026-03-01" title="Permanent link">&para;</a></h1>
+<h1 id="release-124-2026-06-23">Release 1.2.4 (2026-06-23)<a class="headerlink" href="#release-124-2026-06-23" title="Permanent link">&para;</a></h1>
 <h2 id="bug-fixes">Bug fixes<a class="headerlink" href="#bug-fixes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>set stable LTPA cookie name in MQ container setup (#74)</strong>
-After waiting for queue managers, configure ltpaCookieName=LtpaToken2 via setmqweb properties and restart the web server. This ensures a predictable cookie name for integration testing.</li>
+<li><strong>gate lifecycle on queue-manager stability window (#152) (#153)</strong>
+The integration suite flaked because mq_start.sh's readiness wait returned after a single successful REST probe. During startup the MQ web server answers one request while the queue manager is still stabilising, then resets connections — surfacing downstream as SSL_ERROR_SYSCALL / Connection reset by peer in the consuming repos' test steps after setup-mq had already gone green.</li>
 </ul>
+<p>Extract a shared mq_wait_ready.sh gate that requires N consecutive healthy probes across both queue managers (a stability window), with curl retry hardening and an explicit timeout message that distinguishes a genuine startup failure from a slow start. mq_start.sh, mq_seed.sh, and mq_verify.sh all gate through it, so seed/verify and standalone callers inherit the same window. The setup-mq Seed step now passes the REST port env so the gate probes the correct ports.</p>
 
 
 
