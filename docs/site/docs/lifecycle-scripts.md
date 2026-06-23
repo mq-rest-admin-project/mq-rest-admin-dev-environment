@@ -18,8 +18,32 @@ scripts/mq_start.sh
 The script:
 
 1. Runs `docker compose up -d` using `config/docker-compose.yml`
-2. Waits for container health checks to pass
-3. Polls the REST API endpoints until they respond
+2. Delegates to `mq_wait_ready.sh` to block until both REST APIs serve
+   requests reliably
+
+### mq_wait_ready.sh
+
+Readiness gate shared by `mq_start.sh`, `mq_seed.sh`, and `mq_verify.sh`.
+Polls both queue managers' administrative REST endpoints and only
+returns once **every** queue manager has answered healthily for several
+consecutive rounds (a stability window).
+
+```bash
+scripts/mq_wait_ready.sh
+```
+
+A single successful probe is not enough: during startup the MQ web
+server answers one request while the queue manager is still
+stabilising, then resets connections moments later (seen downstream as
+`SSL_ERROR_SYSCALL` / `Connection reset by peer`). Requiring a stability
+window keeps seed/verify and the consuming repos' tests from racing
+startup. On timeout the script exits non-zero with an explicit
+"queue manager not ready after N seconds" message so a genuine startup
+failure is distinguishable from a slow start.
+
+Tunable via [environment variables](reference/environment-variables.md#readiness-gate-variables)
+(`MQ_READY_TIMEOUT_SECONDS`, `MQ_READY_INTERVAL_SECONDS`,
+`MQ_READY_CONSECUTIVE`).
 
 ### mq_seed.sh
 
@@ -32,10 +56,11 @@ scripts/mq_seed.sh
 
 The script:
 
-1. Copies `seed/base-qm1.mqsc` into the QM1 container
-2. Runs `runmqsc QM1` with the seed file
-3. Copies `seed/base-qm2.mqsc` into the QM2 container
-4. Runs `runmqsc QM2` with the seed file
+1. Blocks on `mq_wait_ready.sh` so seeding never races startup
+2. Copies `seed/base-qm1.mqsc` into the QM1 container
+3. Runs `runmqsc QM1` with the seed file
+4. Copies `seed/base-qm2.mqsc` into the QM2 container
+5. Runs `runmqsc QM2` with the seed file
 
 ### mq_verify.sh
 
@@ -46,8 +71,9 @@ API on both queue managers.
 scripts/mq_verify.sh
 ```
 
-The script checks each object type (queues, channels, topics, etc.)
-and reports success or failure for each.
+The script first blocks on `mq_wait_ready.sh`, then checks each object
+type (queues, channels, topics, etc.) and reports success or failure
+for each.
 
 ### mq_reset.sh
 

@@ -39,6 +39,17 @@ Used by the lifecycle scripts and seed/verify operations.
 | `MQ_ADMIN_USER` | `mqadmin` | Admin username for REST API authentication |
 | `MQ_ADMIN_PASSWORD` | `mqadmin` | Admin password for REST API authentication |
 
+## Readiness gate variables
+
+Used by `mq_wait_ready.sh` (called from `mq_start.sh`, `mq_seed.sh`, and
+`mq_verify.sh`) to tune the startup stability window.
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `MQ_READY_TIMEOUT_SECONDS` | `120` | Hard timeout before the gate fails with an explicit "not ready" error |
+| `MQ_READY_INTERVAL_SECONDS` | `3` | Seconds between readiness probe rounds |
+| `MQ_READY_CONSECUTIVE` | `3` | Consecutive healthy rounds (across both queue managers) required before proceeding |
+
 ## Test gate variables
 
 Control integration test execution in consuming repositories.
