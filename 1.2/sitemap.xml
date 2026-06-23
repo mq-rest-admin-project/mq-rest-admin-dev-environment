@@ -1,87 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/changelog/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/changelog/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/ci-integration/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/ci-integration/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/development/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/development/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/getting-started/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/getting-started/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/lifecycle-scripts/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/lifecycle-scripts/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/architecture/cross-qm-routing/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/architecture/cross-qm-routing/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/architecture/environment-contract/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/architecture/environment-contract/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/configuration/docker-compose/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/configuration/docker-compose/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/configuration/rest-api-users/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/configuration/rest-api-users/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/configuration/seed-data/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/configuration/seed-data/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/reference/environment-variables/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/reference/environment-variables/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/reference/port-allocation/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/reference/port-allocation/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/releases/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.1.0/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.1.0/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.1.1/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.1.1/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.1.2/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.1.2/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.0/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.0/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.1/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.1/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.2/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.2/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
     <url>
-         <loc>https://wphillipmoore.github.io/mq-rest-admin-dev-environment/1.2/setup/new-repo/</loc>
-         <lastmod>2026-03-02</lastmod>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/releases/v1.2.3/</loc>
+         <lastmod>2026-06-23</lastmod>
+    </url>
+    <url>
+         <loc>https://mq-rest-admin-project.github.io/mq-rest-admin-dev-environment/1.2/setup/new-repo/</loc>
+         <lastmod>2026-06-23</lastmod>
     </url>
 </urlset>
