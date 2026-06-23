@@ -107,6 +107,14 @@ queue manager to route MQSC commands to the other.
 | `scripts/mq_reset.sh` | Stop containers, remove volumes, and restart cleanly |
 | `scripts/mq_stop.sh` | Stop and remove containers (preserves volumes) |
 
+### MQ version selection
+
+`mq-versions.json` lists the supported MQ versions. Set `MQ_VERSION` to an
+alias (e.g. `10.0`, `9.4.5`) for any lifecycle script; omit it to use the
+manifest `default`. CI consumers call the reusable `mq-versions.yml`
+workflow to build a matrix and pass `mq-version` to the `setup-mq` action;
+track the rolling `vX.Y` tag so new versions are picked up automatically.
+
 ## CI integration
 
 This repository provides a composite action at
