@@ -132,6 +132,8 @@ a real MQ queue manager.
 - **Docker**: Docker Desktop or equivalent with Docker Compose v2
 - **curl**: For REST API health checks (typically pre-installed on
   macOS/Linux)
+- **jq**: JSON processor used to read `mq-versions.json` for version
+  selection (`brew install jq` / `apt-get install jq`)
 
 ### Container Lifecycle
 
@@ -141,6 +143,15 @@ scripts/mq_seed.sh           # Run MQSC seed commands on both queue managers
 scripts/mq_verify.sh         # Verify seed objects exist via REST API
 scripts/mq_reset.sh          # Stop + start + re-seed (full reset)
 scripts/mq_stop.sh           # Stop and remove containers
+```
+
+Select the MQ version with `MQ_VERSION` (alias from `mq-versions.json`;
+defaults to the manifest `default`). Each version uses its own Docker
+volumes, so switching is non-destructive:
+
+```bash
+MQ_VERSION=10.0 scripts/mq_start.sh    # run 10.0
+MQ_VERSION=9.4.5 scripts/mq_start.sh   # run 9.4.5
 ```
 
 ## Architecture
@@ -159,7 +170,7 @@ Consuming repositories depend on these stable details:
 | QM2 MQ listener | `localhost:1415` |
 | Admin user | `mqadmin` / `mqadmin` |
 | Reader user | `mqreader` / `mqreader` |
-| Docker image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` (IBM MQ for Developers) |
+| Docker image | Selected via `mq-versions.json` (`MQ_VERSION`); default `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
 | Docker network | `mq-dev-net` |
 
 ### Seed Data Strategy

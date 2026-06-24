@@ -4,6 +4,10 @@ description: >-
   and verify the environment is ready.
 
 inputs:
+  mq-version:
+    description: "MQ version alias from mq-versions.json (default: manifest default)"
+    required: false
+    default: ''
   project-name:
     description: COMPOSE_PROJECT_NAME for container isolation
     required: false
@@ -30,6 +34,15 @@ inputs:
     default: 'true'
 
 outputs:
+  mq-version:
+    description: Resolved MQ version alias
+    value: ${{ steps.resolve.outputs.mq-version }}
+  mq-image:
+    description: Resolved MQ container image tag
+    value: ${{ steps.resolve.outputs.mq-image }}
+  mq-caps:
+    description: Capability tokens for the resolved version (JSON array)
+    value: ${{ steps.resolve.outputs.mq-caps }}
   qm1-rest-url:
     description: QM1 REST API base URL
     value: https://localhost:${{ inputs.qm1-rest-port }}/ibmmq/rest/v2
@@ -40,11 +53,29 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Resolve MQ version
+      id: resolve
+      shell: bash
+      working-directory: ${{ github.action_path }}/../../..
+      env:
+        MQ_VERSION: ${{ inputs.mq-version }}
+        MQ_PROJECT_NAME_PREFIX: ${{ inputs.project-name }}
+      run: |
+        # shellcheck source=scripts/mq_resolve_version.sh
+        source scripts/mq_resolve_version.sh
+        mq_resolve "${MQ_VERSION:-}"
+        {
+          echo "mq-version=$MQ_VERSION"
+          echo "mq-image=$MQ_IMAGE"
+          echo "mq-caps=$MQ_CAPS"
+        } >> "$GITHUB_OUTPUT"
+
     - name: Start MQ containers
       shell: bash
       working-directory: ${{ github.action_path }}/../../..
       env:
-        COMPOSE_PROJECT_NAME: ${{ inputs.project-name }}
+        MQ_VERSION: ${{ inputs.mq-version }}
+        MQ_PROJECT_NAME_PREFIX: ${{ inputs.project-name }}
         QM1_REST_PORT: ${{ inputs.qm1-rest-port }}
         QM2_REST_PORT: ${{ inputs.qm2-rest-port }}
         QM1_MQ_PORT: ${{ inputs.qm1-mq-port }}
@@ -55,7 +86,8 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}/../../..
       env:
-        COMPOSE_PROJECT_NAME: ${{ inputs.project-name }}
+        MQ_VERSION: ${{ inputs.mq-version }}
+        MQ_PROJECT_NAME_PREFIX: ${{ inputs.project-name }}
         QM1_REST_PORT: ${{ inputs.qm1-rest-port }}
         QM2_REST_PORT: ${{ inputs.qm2-rest-port }}
       run: scripts/mq_seed.sh
@@ -65,7 +97,8 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}/../../..
       env:
-        COMPOSE_PROJECT_NAME: ${{ inputs.project-name }}
+        MQ_VERSION: ${{ inputs.mq-version }}
+        MQ_PROJECT_NAME_PREFIX: ${{ inputs.project-name }}
         QM1_REST_PORT: ${{ inputs.qm1-rest-port }}
         QM2_REST_PORT: ${{ inputs.qm2-rest-port }}
       run: scripts/mq_verify.sh

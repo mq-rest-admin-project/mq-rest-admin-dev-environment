@@ -107,6 +107,16 @@ queue manager to route MQSC commands to the other.
 | `scripts/mq_reset.sh` | Stop containers, remove volumes, and restart cleanly |
 | `scripts/mq_stop.sh` | Stop and remove containers (preserves volumes) |
 
+### MQ version selection
+
+`mq-versions.json` lists the supported MQ versions. Set `MQ_VERSION` to an
+alias (e.g. `10.0`, `9.4.5`) for any lifecycle script; omit it to use the
+manifest `default`. An unrecognized `MQ_VERSION` fails loudly, printing the
+list of valid aliases — there is no silent fallback. CI consumers call the
+reusable `mq-versions.yml` workflow to build a matrix and pass `mq-version`
+to the `setup-mq` action; track the rolling `vX.Y` tag so new versions are
+picked up automatically.
+
 ## CI integration
 
 This repository provides a composite action at
@@ -133,18 +143,64 @@ jobs:
       # ${{ steps.mq.outputs.qm2-rest-url }}
 ```
 
+### Multi-version matrix
+
+Call the reusable `mq-versions.yml` workflow to discover supported versions,
+then build a matrix from its output and pass the resolved alias to
+`setup-mq`:
+
+```yaml
+jobs:
+  mq-versions:
+    uses: mq-rest-admin-project/mq-rest-admin-dev-environment/.github/workflows/mq-versions.yml@v1.2
+    # outputs: versions (JSON array), default
+
+  test:
+    needs: mq-versions
+    strategy:
+      matrix:
+        mq: ${{ fromJSON(needs.mq-versions.outputs.versions) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MQ (${{ matrix.mq }})
+        id: mq
+        uses: mq-rest-admin-project/mq-rest-admin-dev-environment/.github/actions/setup-mq@v1.2
+        with:
+          mq-version: ${{ matrix.mq }}
+
+      # ${{ steps.mq.outputs.mq-version }}  — resolved alias
+      # ${{ steps.mq.outputs.mq-image }}    — container image tag
+      # ${{ steps.mq.outputs.mq-caps }}     — capability tokens (JSON array)
+      # ${{ steps.mq.outputs.qm1-rest-url }}
+      # ${{ steps.mq.outputs.qm2-rest-url }}
+```
+
+Track the rolling `vX.Y` tag (e.g. `v1.2`) so new MQ versions are picked up
+without workflow changes.
+
 ### Inputs
 
 | Input | Required | Default | Description |
 | --- | --- | --- | --- |
+| `mq-version` | No | `''` | MQ version alias from `mq-versions.json` (default: manifest default) |
+| `project-name` | No | `'mq-dev'` | `COMPOSE_PROJECT_NAME` for container isolation |
+| `qm1-rest-port` | No | `'9443'` | Host port for QM1 REST API |
+| `qm2-rest-port` | No | `'9444'` | Host port for QM2 REST API |
+| `qm1-mq-port` | No | `'1414'` | Host port for QM1 MQ listener |
+| `qm2-mq-port` | No | `'1415'` | Host port for QM2 MQ listener |
 | `verify` | No | `'true'` | Run `mq_verify.sh` after seeding |
 
 ### Outputs
 
-| Output | Value |
+| Output | Description |
 | --- | --- |
-| `qm1-rest-url` | `https://localhost:9443/ibmmq/rest/v2` |
-| `qm2-rest-url` | `https://localhost:9444/ibmmq/rest/v2` |
+| `mq-version` | Resolved MQ version alias |
+| `mq-image` | Resolved MQ container image tag |
+| `mq-caps` | Capability tokens for the resolved version (JSON array) |
+| `qm1-rest-url` | QM1 REST API base URL |
+| `qm2-rest-url` | QM2 REST API base URL |
 
 ## Local development
 

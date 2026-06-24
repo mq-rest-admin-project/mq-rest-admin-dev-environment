@@ -1,0 +1,7 @@
+{
+  "default": "9.4.5",
+  "versions": {
+    "9.4.5": { "image": "test/mq:9.4.5", "caps": [] },
+    "10.0": { "image": "test/mq:10.0", "caps": ["chstatus-quantum-safe"] }
+  }
+}
