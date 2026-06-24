@@ -16,8 +16,11 @@ coordination with all language libraries.
 | QM2 MQ listener | `localhost:1415` |
 | Admin user | `mqadmin` / `mqadmin` |
 | Reader user | `mqreader` / `mqreader` |
-| Docker image | `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
+| Docker image | Selected via `mq-versions.json` (`MQ_VERSION`); default `icr.io/ibm-messaging/mq:9.4.5.1-r1` |
 | Docker network | `mq-dev-net` |
+
+The MQ version is selectable via `MQ_VERSION`; ports, queue-manager names,
+and users are invariant across versions.
 
 ## Seed objects
 

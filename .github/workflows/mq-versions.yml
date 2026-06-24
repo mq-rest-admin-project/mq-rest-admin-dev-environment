@@ -1,0 +1,34 @@
+name: MQ versions
+# Reusable workflow: publishes the supported MQ version list (from
+# mq-versions.json) so consuming repos can build a test matrix that
+# stays in sync with this repo. Consume at the rolling vX.Y tag.
+
+on:
+  workflow_call:
+    outputs:
+      versions:
+        description: JSON array of supported MQ version aliases
+        value: ${{ jobs.versions.outputs.versions }}
+      default:
+        description: Default MQ version alias
+        value: ${{ jobs.versions.outputs.default }}
+
+permissions:
+  contents: read
+
+jobs:
+  versions:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.read.outputs.versions }}
+      default: ${{ steps.read.outputs.default }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read manifest
+        id: read
+        shell: bash
+        run: |
+          {
+            echo "versions=$(bash scripts/mq_versions_matrix.sh)"
+            echo "default=$(jq -r '.default' mq-versions.json)"
+          } >> "$GITHUB_OUTPUT"
