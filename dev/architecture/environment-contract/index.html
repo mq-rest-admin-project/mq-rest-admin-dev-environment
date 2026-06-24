@@ -1691,7 +1691,7 @@ coordination with all language libraries.</p>
 </tr>
 <tr>
 <td>Docker image</td>
-<td><code>icr.io/ibm-messaging/mq:9.4.5.1-r1</code></td>
+<td>Selected via <code>mq-versions.json</code> (<code>MQ_VERSION</code>); default <code>icr.io/ibm-messaging/mq:9.4.5.1-r1</code></td>
 </tr>
 <tr>
 <td>Docker network</td>
@@ -1699,6 +1699,8 @@ coordination with all language libraries.</p>
 </tr>
 </tbody>
 </table>
+<p>The MQ version is selectable via <code>MQ_VERSION</code>; ports, queue-manager names,
+and users are invariant across versions.</p>
 <h2 id="seed-objects">Seed objects<a class="headerlink" href="#seed-objects" title="Permanent link">&para;</a></h2>
 <p>Both queue managers receive a shared set of <code>DEV.*</code> objects. QM1 has
 the full set covering all major MQ object types; QM2 has a minimal
